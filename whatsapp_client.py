@@ -90,10 +90,10 @@ def get_instance_status() -> dict:
     try:
         resp = requests.get(url, headers=_headers(), timeout=15)
         data = resp.json()
-        # Find our specific instance in the list
+        # Evolution API v2 returns a flat list with 'name' and 'connectionStatus'
         if isinstance(data, list):
             for inst in data:
-                name = inst.get("instance", {}).get("instanceName") or inst.get("instanceName")
+                name = inst.get("name") or inst.get("instance", {}).get("instanceName")
                 if name == config.EVOLUTION_INSTANCE:
                     return inst
             return {"error": f"Instance '{config.EVOLUTION_INSTANCE}' not found", "all": data}
