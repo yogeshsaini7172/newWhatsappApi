@@ -1,0 +1,51 @@
+services:
+  - type: web
+    name: whatsapp-server
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn wsgi:application --workers 1 --threads 4 --timeout 120 --bind 0.0.0.0:$PORT
+    plan: free
+    envVars:
+      - key: PORT
+        value: "10000"
+
+      # ── Evolution API ──────────────────────────────────────────────────────
+      - key: EVOLUTION_API_URL
+        sync: false   # Set this manually in Render dashboard
+
+      - key: EVOLUTION_API_KEY
+        sync: false   # Set this manually in Render dashboard
+
+      - key: EVOLUTION_INSTANCE
+        sync: false   # Set this manually in Render dashboard
+
+      # ── Security ──────────────────────────────────────────────────────────
+      - key: WA_SERVER_SECRET
+        generateValue: true   # Render auto-generates a strong secret
+
+      # ── Anti-Detection Timing (optional — defaults are safe) ─────────────
+      - key: MIN_DELAY_SECONDS
+        value: "8"
+
+      - key: MAX_DELAY_SECONDS
+        value: "25"
+
+      - key: TYPING_CHARS_PER_SECOND
+        value: "7"
+
+      - key: MIN_COMPOSING_SECONDS
+        value: "2"
+
+      - key: MAX_COMPOSING_SECONDS
+        value: "12"
+
+      # ── Retry ─────────────────────────────────────────────────────────────
+      - key: MAX_RETRIES
+        value: "3"
+
+      - key: RETRY_BASE_DELAY
+        value: "5"
+
+      # ── Phone ─────────────────────────────────────────────────────────────
+      - key: DEFAULT_COUNTRY_CODE
+        value: "91"
